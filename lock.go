@@ -50,11 +50,5 @@ func (m *mutex) Unlock() {
 }
 
 func (m *mutex) TryLock() bool {
-	if m.owner == -1 {
-		return true
-	}
-
-	m.mutex.TryLock()
-
-	return goroutineId() == m.owner
+	return m.owner == -1 || goroutineId() == m.owner
 }

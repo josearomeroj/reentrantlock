@@ -90,16 +90,20 @@ func TestMutex_Unlock(t *testing.T) {
 
 func Test_ReentrantRecursive(t *testing.T) {
 	m := NewMutex()
-	recursive(m, 0, rand.Intn(100))
+	recursive(m, 0, rand.Intn(100), t)
 }
 
-func recursive(lock Mutex, counter int, stop int) {
+func recursive(lock Mutex, counter int, stop int, t *testing.T) {
 	lock.Lock()
+	if !lock.TryLock() {
+		t.Error("invalid status TryLock should return true")
+	}
+
 	counter++
 
 	if stop == counter {
 		return
 	}
 
-	recursive(lock, counter, stop)
+	recursive(lock, counter, stop, t)
 }
